@@ -2,6 +2,10 @@
 
 #  FIXME: This should ideally be done through settings, not here in code
 import os
+
+from model.champ_sim_result import ChampSimResult
+from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE
+
 os.environ["DISPLAY"] = "localhost:18.0"
 
 import sys
@@ -31,17 +35,24 @@ def usage():
     print '  Input file is a *.out where each line is formatted as follows:\n\tAddress,Program Counter, [...list of reuse per access...]\n'
 
 
-def parse_args():
-    if len(sys.argv) < 2:
+def parse_args_return_dirfile_tuples(argv):
+    if len(argv) < 2:
        usage()
-       sys.exit()
-    input_traces = sys.argv[1:]
-    return input_traces
+       exit(1)
+
+    trace_dirfile_list = []
+    for arg in argv[1:]:
+        arg_tokens = arg.split('/')
+        arg_dir = arg_tokens[1]
+        arg_filename = arg_tokens[2]
+        trace_dirfile_list.append((arg_dir, arg_filename))
+
+    return trace_dirfile_list
 
 
 def log_time(action):
-    sttime = datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S - ')
-    print "{0} @ {0}".format(action, sttime)
+    sttime = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+    print "{0} @ {1}".format(action, sttime)
 
 
 '''
@@ -76,18 +87,25 @@ def extract_trace_info(trace_file):
 '''
 
 
-def extract_trace_info(trace_file):
-    # 4-bimodal-no-no-plru-noninclusive-2core.sphinx3.sphinx3.txt
+def get_benchmark_names_from_dir_name(dir_name):
+    token_list = dir_name.split('_')
+    benchmarks = token_list[2:]
+    return benchmarks
+
+
+def extract_trace_info_from_file_name(trace_dir, trace_file):
+    benchmark_names = get_benchmark_names_from_dir_name(trace_dir)
 
     fields = trace_file.split('-')
 
-    size, pred, l1pref, l2pref, policy, inclusion, core_param = fields[0:7]
+    # "phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt"
+    phase, core_param, pred, l1pref, l2pref, policy, core_param_again, option, policy_again = fields[0:9]
 
-    cores, b0, b1, _ = core_param.split('.')
+    # 4-bimodal-no-no-plru-noninclusive-2core.sphinx3.sphinx3.txt
+    # size, pred, l1pref, l2pref, policy, inclusion, core_param = fields[0:7]
+    core = core_param.split('core')[1]
 
-    core = cores.split('core')[0]
-
-    return size, core, b0, b1, l2pref, policy, inclusion
+    return phase, core, benchmark_names, l1pref, l2pref, policy, "noninclusive"
 
 
 def parse_trace_files(trace_files):
@@ -105,8 +123,13 @@ def parse_trace_files(trace_files):
         lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(float))))))
 
     interval = 0
-    for trace_file in trace_files:
-        size, cores, bench0, bench1, pref, policy, inclusion = extract_trace_info(trace_file)
+    for trace_dir, trace_file in trace_files:
+        phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive = \
+            extract_trace_info_from_file_name(trace_dir, trace_file)
+
+
+        print phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive
+
 
         current_ipc = ipc[(bench0, bench1)][policy][pref]
         current_mpki = mpki[(bench0, bench1)][policy][pref]
@@ -330,7 +353,7 @@ def get_data2(data, intrvls, benchmarks, policies, prefetchers, intervals, sizes
 # fixme: modify for 4/8 cores
 def main(argv):
     log_time("starting")
-    traces = parse_args()
+    traces = parse_args_return_dirfile_tuples(argv)
     ipc, mpki, IPC, MPKI, lat = parse_trace_files(traces)
 
     benchmarks, policies, prefetchers, intervals, sizes, inclusion, lR, lC, lP = get_sorted_lists(ipc, 1)
@@ -378,8 +401,42 @@ def main(argv):
     log_time("ending")
 
 
+def parse_and_plot(argv):
+    log_time("starting")
+
+    traces_dir_files = parse_args_return_dirfile_tuples(argv)
+
+    for trace_dir, trace_file in traces_dir_files:
+
+        phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive = \
+            extract_trace_info_from_file_name(trace_dir, trace_file)
+
+
+        print phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive
+
+        # the result object
+        champ_sim_result = ChampSimResult(phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive)
+
+        #Step through file lines
+        file_lines = open("./input/{0}/{1}".format(trace_dir, trace_file), 'r').readlines()
+        in_region_of_interest = False
+        for i, line in enumerate(file_lines):
+            if "Region of Interest Statistics" in line:
+                in_region_of_interest = True
+            if not in_region_of_interest:
+                continue
+            # We are in region of interest
+
+            if "CPU" in line: # this line is start of data for a new core
+                cpu_line = line
+                llc_line = file_lines[i + LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE]
+
+                print cpu_line
+
+
+                print llc_line
+                exit(0)
+
 if __name__ == "__main__":
-    main(sys.argv[1:])
-
-
-    # print os.environ["DISPLAY"]
+    # main(sys.argv[1:])
+    parse_and_plot(sys.argv)
