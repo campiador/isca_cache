@@ -1,0 +1,1 @@
+./run_4core_classification_phase0_plru.sh: line 20: ./bin/: is a directory
