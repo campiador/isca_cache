@@ -1,10 +1,17 @@
 # !/usr/sup/bin/python
+# post_process_champsim_results.py
+# Behnam Heydarshahi, November 2017
+# Tufts Computer Architecture Lab
+#
+# This program reads champsim output files and plots them (mpki and ipc)
 
-#  FIXME: This should ideally be done through settings, not here in code
+# FIXME: This should ideally be done through settings, not here in code
 import os
 
+from graphics.subplotable import SubPlotable
 from model.champ_sim_result import ChampSimResult
-from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE
+from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
+    extract_llc_misses, CorePerf
 
 os.environ["DISPLAY"] = "localhost:18.0"
 
@@ -19,7 +26,7 @@ from operator import add
 from operator import truediv
 
 import matplotlib
-matplotlib.use('GTKAgg')
+matplotlib.use('Agg')
 # from matplotlib import rc
 
 # rc('text',usetex=True)
@@ -100,6 +107,8 @@ def extract_trace_info_from_file_name(trace_dir, trace_file):
 
     # "phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt"
     phase, core_param, pred, l1pref, l2pref, policy, core_param_again, option, policy_again = fields[0:9]
+
+    phase = phase.replace("phase", "")
 
     # 4-bimodal-no-no-plru-noninclusive-2core.sphinx3.sphinx3.txt
     # size, pred, l1pref, l2pref, policy, inclusion, core_param = fields[0:7]
@@ -431,11 +440,23 @@ def parse_and_plot(argv):
                 cpu_line = line
                 llc_line = file_lines[i + LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE]
 
-                print cpu_line
+                print cpu_line, llc_line
+                ipc, n_instructions = extract_ipc_and_instruction_count(cpu_line)
+                n_llc_misses = extract_llc_misses(llc_line)
+
+                core = CorePerf(ipc, n_llc_misses, n_instructions)
+                champ_sim_result.add_core_result(core)
+
+        mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
+        mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
+        x_axis_name = "#cores:{}, benchmark:{}, phase:{}".format(champ_sim_result.n_cores,
+                                                                 champ_sim_result.benchmarks,
+                                                                 champ_sim_result.phase)
 
 
-                print llc_line
-                exit(0)
+        ipc_subplotable = SubPlotable("IPC", x_axis_name, mean_ipc, [0 for _ in x_axis_name])
+        mpki_subplotable = SubPlotable("MPKI", x_axis_name, mean_mpki, [0 for _ in x_axis_name])
+
 
 if __name__ == "__main__":
     # main(sys.argv[1:])

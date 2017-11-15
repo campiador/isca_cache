@@ -5,13 +5,14 @@
 # This module models ChampSim performance results for one simulation run
 # each simulation has a number of cores
 
-# CONSTANTS
+from scipy import stats
+
 
 class ChampSimResult:
     def __init__(self, phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive):
         self.phase = phase
         self.n_cores = core
-        self.benchmars = benchmark_names
+        self.benchmarks = benchmark_names
         self.l1pref = l1pref
         self.l2pref = l2pref
         self.policy = policy
@@ -19,10 +20,17 @@ class ChampSimResult:
         self.core_results = []
 
     def calculate_harmonic_mean_mpki(self):
-        pass
+        mpki_list = [core_result.llc_mpki for core_result in self.core_results]
+        mpki_list = map(float, mpki_list)
+        mpki_harmonic_mean = stats.hmean(mpki_list)
+        return mpki_harmonic_mean
 
     def calculate_harmonic_mean_ipc(self):
-        pass
+        ipc_list = [core_result.ipc for core_result in self.core_results]
+        ipc_list = map(float, ipc_list)
+        ipc_harmonic_mean = stats.hmean(ipc_list)
+
+        return ipc_harmonic_mean
 
     def get_num_cores(self):
         return self.n_cores
