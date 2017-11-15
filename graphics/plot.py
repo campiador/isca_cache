@@ -3,16 +3,19 @@
 
 #  This module draws charts
 import matplotlib
+import numpy
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import datetime
 import time
 
-from models import constants
+from model import constants
 
 CAPSIZE = 4
 PLOT_START = 0
 PLOT_END = 1
+
 
 
 
@@ -88,8 +91,8 @@ def plot_y_with_stderr(main_title, x_axis_tile, y_axis_title, range_x, range_y, 
     plt.title(main_title)
     plt.xlabel(x_axis_tile)
     plt.ylabel(y_axis_title)
-
-    plt.axis([range_x[PLOT_START], range_x[PLOT_END], range_y[PLOT_START], range_y[PLOT_END]])
+    if range_x is not None:
+        plt.axis([range_x[PLOT_START], range_x[PLOT_END], range_y[PLOT_START], range_y[PLOT_END]])
     plt.legend(loc='best')
 
     # BUG:
@@ -205,3 +208,14 @@ def plot_x_y_line(main_title, x_axis_tile, y_axis_title, subplotables, output_fi
     # plt.show()
     plt.show(block=False)
     plt.gcf().clear()
+
+
+def barchart(objects, performance, y_label, title):
+    y_pos = numpy.arange(len(objects))
+    plt.bar(y_pos, performance, align='center', alpha=0.5)
+    # plt.xticks(y_pos, objects, rotation=90)
+    plt.xticks(y_pos, objects)
+    plt.ylabel(y_label)
+    plt.title(title)
+
+    plt.show()

@@ -8,6 +8,7 @@
 # FIXME: This should ideally be done through settings, not here in code
 import os
 
+from graphics.plot import plot_y_with_stderr, barchart
 from graphics.subplotable import SubPlotable
 from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
@@ -25,8 +26,8 @@ from math import log
 from operator import add
 from operator import truediv
 
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('GTKAgg')
 # from matplotlib import rc
 
 # rc('text',usetex=True)
@@ -413,6 +414,10 @@ def main(argv):
 def parse_and_plot(argv):
     log_time("starting")
 
+    ipcs = []
+    mpkis = []
+    x_axis_names = []
+
     traces_dir_files = parse_args_return_dirfile_tuples(argv)
 
     for trace_dir, trace_file in traces_dir_files:
@@ -440,24 +445,34 @@ def parse_and_plot(argv):
                 cpu_line = line
                 llc_line = file_lines[i + LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE]
 
-                print cpu_line, llc_line
+                # print cpu_line, llc_line
                 ipc, n_instructions = extract_ipc_and_instruction_count(cpu_line)
                 n_llc_misses = extract_llc_misses(llc_line)
 
                 core = CorePerf(ipc, n_llc_misses, n_instructions)
                 champ_sim_result.add_core_result(core)
 
+        # harmonic mean over number of cores
         mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
         mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
         x_axis_name = "#cores:{}, benchmark:{}, phase:{}".format(champ_sim_result.n_cores,
                                                                  champ_sim_result.benchmarks,
                                                                  champ_sim_result.phase)
 
+        ipcs.append(mean_ipc)
+        mpkis.append(mean_mpki)
+        x_axis_names.append(x_axis_name)
+    print "ipc:", ipcs
+    print "mpki:", mpkis
+    print "x_axis_name:", x_axis_names
+    print "\n"
 
-        ipc_subplotable = SubPlotable("IPC", x_axis_name, mean_ipc, [0 for _ in x_axis_name])
-        mpki_subplotable = SubPlotable("MPKI", x_axis_name, mean_mpki, [0 for _ in x_axis_name])
+    barchart(x_axis_names, ipcs, "IPC", "")
+    barchart(x_axis_names, mpkis, "MPKI", "")
+
 
 
 if __name__ == "__main__":
     # main(sys.argv[1:])
-    parse_and_plot(sys.argv)
+    # parse_and_plot(sys.argv)
+    barchart(['a', 'b'], [1, 3], "y label", "title")
