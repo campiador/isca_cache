@@ -14,7 +14,7 @@ from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
     extract_llc_misses, CorePerf
 
-os.environ["DISPLAY"] = "localhost:16.0"
+#os.environ["DISPLAY"] = "localhost:16.0"
 
 import sys
 import re
@@ -455,9 +455,7 @@ def parse_and_plot(argv):
         # harmonic mean over number of cores
         mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
         mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
-        x_axis_name = "#cores:{}, benchmark:{}, phase:{}".format(champ_sim_result.n_cores,
-                                                                 champ_sim_result.benchmarks,
-                                                                 champ_sim_result.phase)
+        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase, champ_sim_result.benchmarks)
 
         ipcs.append(mean_ipc)
         mpkis.append(mean_mpki)
@@ -474,4 +472,4 @@ def parse_and_plot(argv):
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)
-    barchart(['a', 'b'], [1, 3], "y label", "title")
+    # barchart(['a', 'b'], [1, 3], "y label", "title")

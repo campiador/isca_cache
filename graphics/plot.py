@@ -5,7 +5,7 @@
 import matplotlib
 import numpy
 
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import datetime
 import time
@@ -213,8 +213,8 @@ def plot_x_y_line(main_title, x_axis_tile, y_axis_title, subplotables, output_fi
 def barchart(objects, performance, y_label, title):
     y_pos = numpy.arange(len(objects))
     plt.bar(y_pos, performance, align='center', alpha=0.5)
-    # plt.xticks(y_pos, objects, rotation=90)
-    plt.xticks(y_pos, objects)
+    plt.xticks(y_pos, objects, fontsize=6, rotation=90)
+    # plt.xticks(y_pos, objects)
     plt.ylabel(y_label)
     plt.title(title)
 
