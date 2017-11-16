@@ -224,9 +224,10 @@ def barchart(objects, performance, y_label, title):
 def barchart_dual_y_shared_x(x, x_label, y1, y1_label, y2, y2_label, title):
     # Two subplots, the axes array is 1-d
     f, axarr = plt.subplots(2, sharex=True)
+    plt.xticks(y1, x, fontsize=6, rotation=90)
     axarr[0].plot(x, y1)
-    axarr[0].set_title('Sharing X axis1')
-    axarr[1].set_title('Sharing X axis 2')
+    axarr[0].set_title(x_label)
+    axarr[1].set_title(y2_label)
     axarr[1].scatter(x, y2)
 
     # Fine-tune figure; distance subplots farther from each other.

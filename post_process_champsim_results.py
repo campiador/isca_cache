@@ -465,12 +465,11 @@ def parse_and_plot(argv):
     print "x_axis_name:", x_axis_names
     print "\n"
 
-    barchart(x_axis_names, ipcs, "IPC", "")
-    barchart(x_axis_names, mpkis, "MPKI", "")
+    # barchart(x_axis_names, ipcs, "IPC", "")
+    # barchart(x_axis_names, mpkis, "MPKI", "")
     barchart_dual_y_shared_x(x_axis_names, "x_label", mpkis, "MPKI", ipcs, "IPCS", "Performance")
 
 
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)
-    # barchart(['a', 'b'], [1, 3], "y label", "title")
