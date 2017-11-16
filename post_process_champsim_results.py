@@ -14,8 +14,6 @@ from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
     extract_llc_misses, CorePerf
 
-#os.environ["DISPLAY"] = "localhost:16.0"
-
 import sys
 import re
 import datetime

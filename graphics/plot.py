@@ -5,10 +5,13 @@
 import matplotlib
 import numpy
 
-#matplotlib.use('Agg')
+matplotlib.use('GTKAgg')
 import matplotlib.pyplot as plt
 import datetime
 import time
+
+#os.environ["DISPLAY"] = "localhost:16.0"
+
 
 from model import constants
 
@@ -224,11 +227,15 @@ def barchart(objects, performance, y_label, title):
 def barchart_dual_y_shared_x(x, x_label, y1, y1_label, y2, y2_label, title):
     # Two subplots, the axes array is 1-d
     f, axarr = plt.subplots(2, sharex=True)
-    plt.xticks(y1, x, fontsize=6, rotation=90)
-    axarr[0].plot(x, y1)
+
+    x_pos = numpy.arange(len(x))
+    plt.xticks(x_pos, x, fontsize=6, rotation=90)
+
+    # plt.bar(y_pos, performance, align='center', alpha=0.5)
+    axarr[0].bar(x_pos, y1, align='center')
     axarr[0].set_title(x_label)
     axarr[1].set_title(y2_label)
-    axarr[1].scatter(x, y2)
+    axarr[1].bar(x_pos, y2, align='center')
 
     # Fine-tune figure; distance subplots farther from each other.
     f.subplots_adjust(hspace=0.3)
