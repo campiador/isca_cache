@@ -8,7 +8,7 @@
 # FIXME: This should ideally be done through settings, not here in code
 import os
 
-from graphics.plot import plot_y_with_stderr, barchart
+from graphics.plot import plot_y_with_stderr, barchart, barchart_dual_y_shared_x
 from graphics.subplotable import SubPlotable
 from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
@@ -467,6 +467,7 @@ def parse_and_plot(argv):
 
     barchart(x_axis_names, ipcs, "IPC", "")
     barchart(x_axis_names, mpkis, "MPKI", "")
+    barchart_dual_y_shared_x(x_axis_names, "x_label", mpkis, "MPKI", ipcs, "IPCS", "Performance")
 
 
 
