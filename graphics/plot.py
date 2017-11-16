@@ -1,6 +1,5 @@
 #  plot.py
 #  by Behnam Heydarshahi, November 2017
-
 #  This module draws charts
 import matplotlib
 import numpy
@@ -10,8 +9,8 @@ import matplotlib.pyplot as plt
 import datetime
 import time
 
-#os.environ["DISPLAY"] = "localhost:16.0"
-
+# This should be set by server:
+# os.environ["DISPLAY"] = "localhost:16.0"
 
 from model import constants
 
