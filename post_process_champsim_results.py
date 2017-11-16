@@ -453,7 +453,7 @@ def parse_and_plot(argv):
         # harmonic mean over number of cores
         mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
         mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
-        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase, champ_sim_result.benchmarks)
+        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase, [b[0:4] for b in champ_sim_result.benchmarks])
 
         ipcs.append(mean_ipc)
         mpkis.append(mean_mpki)
@@ -465,7 +465,7 @@ def parse_and_plot(argv):
 
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
-    barchart_dual_y_shared_x(x_axis_names, "x_label", mpkis, "MPKI", ipcs, "IPCS", "Performance")
+    barchart_dual_y_shared_x(x_axis_names, "CloudSuite", mpkis, "MPKI", ipcs, "IPC", "Performance")
 
 
 

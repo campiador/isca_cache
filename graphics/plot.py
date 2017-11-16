@@ -5,7 +5,7 @@
 import matplotlib
 import numpy
 
-matplotlib.use('GTKAgg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import datetime
 import time
@@ -229,15 +229,15 @@ def barchart_dual_y_shared_x(x, x_label, y1, y1_label, y2, y2_label, title):
     f, axarr = plt.subplots(2, sharex=True)
 
     x_pos = numpy.arange(len(x))
-    plt.xticks(x_pos, x, fontsize=6, rotation=90)
+    plt.xticks(x_pos, x, fontsize=8, rotation=90)
 
     # plt.bar(y_pos, performance, align='center', alpha=0.5)
     axarr[0].bar(x_pos, y1, align='center')
-    axarr[0].set_title(x_label)
+    axarr[0].set_title(y1_label)
     axarr[1].set_title(y2_label)
     axarr[1].bar(x_pos, y2, align='center')
 
     # Fine-tune figure; distance subplots farther from each other.
-    f.subplots_adjust(hspace=0.3)
+    # f.subplots_adjust(hspace=0.3)
 
     plt.show()
