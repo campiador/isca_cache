@@ -37,3 +37,7 @@ class ChampSimResult:
 
     def add_core_result(self, core_result):
         self.core_results.append(core_result)
+
+    def set_core_hitrates(self, core_index, core_hitrates):
+        core_index = int(core_index)
+        self.core_results[core_index].set_hitrates(core_hitrates)

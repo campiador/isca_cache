@@ -15,6 +15,10 @@ class CorePerf:
         self.llc_misses = llc_misses
         self.n_instructions = n_instructions
         self.llc_mpki = calculate_core_mpki(llc_misses, n_instructions)
+        self.core_capacity_hitrates = []  # for 1, 2, 4, 8, 16
+
+    def set_hitrates(self, hitrates):
+        self.core_capacity_hitrates = hitrates
 
 
 # static module methods

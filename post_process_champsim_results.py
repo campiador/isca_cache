@@ -61,6 +61,18 @@ def extract_trace_info_from_file_name(trace_dir, trace_file):
 
     return phase, core, benchmark_names, l1pref, l2pref, policy, "noninclusive"
 
+
+def extract_core_number_and_hitrates(ccc_line):
+    line_tokens = ccc_line.split(":")
+    core_tokens = line_tokens[0].split()
+
+    core_number = core_tokens[1]
+
+    core_hitrates= line_tokens[1:-2]
+
+    return core_number, core_hitrates
+
+
 def parse_and_plot(argv):
     log_time("starting")
 
@@ -101,11 +113,17 @@ def parse_and_plot(argv):
 
                 core = CorePerf(ipc, n_llc_misses, n_instructions)
                 champ_sim_result.add_core_result(core)
+            if "CACHE CAPACIITY CURVE (Hit Rate)" in line:  
+                #  e.g. line  = CORE 0 CACHE CAPACIITY CURVE (Hit Rate):0.272091:0.466812:0.631125:0.675701:0.740989:0:
+                ccc_line = line
+                core_number, core_hitrates = extract_core_number_and_hitrates(ccc_line)
+                champ_sim_result.set_core_hitrates(core_number, core_hitrates)
 
         # harmonic mean over number of cores
         mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
         mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
-        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase, [b[0:4] for b in champ_sim_result.benchmarks])
+        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase,
+                                                  [b[0:4] for b in champ_sim_result.benchmarks])
 
         ipcs.append(mean_ipc)
         mpkis.append(mean_mpki)
@@ -117,7 +135,9 @@ def parse_and_plot(argv):
 
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
-    barchart_dual_y_shared_x(x_axis_names, "CloudSuite", mpkis, "MPKI", ipcs, "IPC", "Performance")
+    # barchart_dual_y_shared_x(x_axis_names, "CloudSuite", mpkis, "MPKI", ipcs, "IPC", "Performance")
+    for core in champ_sim_result.core_results:
+        print "core hitrates:", core.core_capacity_hitrates
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)
