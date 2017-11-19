@@ -5,7 +5,8 @@
 #
 # This program reads ChampSim output files and plots them (llc_mpki and ipc)
 
-from graphics.plot import barchart_dual_y_shared_x
+from graphics.plot import barchart_dual_y_shared_x, plot_x_y_line
+from graphics.subplotable import SubPlotable
 from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
     extract_llc_misses, CorePerf
@@ -82,7 +83,9 @@ def parse_and_plot(argv):
 
     traces_dir_files = parse_args_return_dirfile_tuples(argv)
 
+
     for trace_dir, trace_file in traces_dir_files:
+        ccc_subplotables = []
 
         phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive = \
             extract_trace_info_from_file_name(trace_dir, trace_file)
@@ -123,11 +126,22 @@ def parse_and_plot(argv):
         mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
         mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
         x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase,
-                                                  [b[0:4] for b in champ_sim_result.benchmarks])
+                                                  [b[0:4] for b in champ_sim_result.benchmarks]) # first four chars of b
 
         ipcs.append(mean_ipc)
         mpkis.append(mean_mpki)
         x_axis_names.append(x_axis_name)
+
+        # CCC plots for a benchmark
+        for i, core in enumerate(champ_sim_result.core_results):
+            print "core hitrates:", core.core_capacity_hitrates
+            ccc_subplotable = SubPlotable("Core {}".format(i), [1, 2, 4, 8, 16], core.core_capacity_hitrates,
+                                          [0 for _ in core.core_capacity_hitrates])
+            ccc_subplotables.append(ccc_subplotable)
+
+        plot_x_y_line("Cache Capacity Curve for benchmark {}".format(champ_sim_result.benchmarks),
+                      "#cores", "CCC hit-rate", ccc_subplotables, "ccc")
+
     print "ipc:", ipcs
     print "mpki:", mpkis
     print "x_axis_name:", x_axis_names
@@ -136,8 +150,6 @@ def parse_and_plot(argv):
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
     # barchart_dual_y_shared_x(x_axis_names, "CloudSuite", mpkis, "MPKI", ipcs, "IPC", "Performance")
-    for core in champ_sim_result.core_results:
-        print "core hitrates:", core.core_capacity_hitrates
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)
