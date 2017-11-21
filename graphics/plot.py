@@ -177,7 +177,22 @@ def plot_x_y_line(main_title, x_axis_tile, y_axis_title, subplotables, output_fi
         if constants.DEBUG_VERBOSE:
             print " color {} = {}".format(i, color)
 
-        plt.plot(plotable.x_values, plotable.y_values, color=color, label=plotable.label, marker='o')
+        ax = plt.gca()  # grab the current axis
+        ar = numpy.arange(6)
+        print "ar", ar
+        ax.set_xticks(ar)
+
+
+
+        print plotable.x_values
+        print plotable.y_values
+        # exit(0)
+        ax.set_xticklabels(['a', '1', '2', '4', '8', '16'])
+
+        xticks = ax.xaxis.get_major_ticks()
+        print xticks[0].label1
+
+        plt.plot([1, 2, 3, 4, 5], plotable.y_values, color=color, label=plotable.label, marker='o')
 
 
         # the dots
@@ -187,7 +202,7 @@ def plot_x_y_line(main_title, x_axis_tile, y_axis_title, subplotables, output_fi
     plt.xlabel(x_axis_tile)
     plt.ylabel(y_axis_title)
 
-    # plt.axis([range_x[PLOT_START], range_x[PLOT_END], range_y[PLOT_START], range_y[PLOT_END]])
+    plt.axis([1, 5, 0, 1])
     plt.legend(loc='best')
 
     plt.grid(True)
@@ -207,9 +222,10 @@ def plot_x_y_line(main_title, x_axis_tile, y_axis_title, subplotables, output_fi
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     plt.savefig('./output/{}_{}_{}.png'.format(output_file_name, main_title, st))
 
-    # plt.show()
     plt.show(block=False)
+    # plt.show(block=True)
     plt.gcf().clear()
+
 
 
 def barchart(objects, performance, y_label, title):
@@ -220,7 +236,8 @@ def barchart(objects, performance, y_label, title):
     plt.ylabel(y_label)
     plt.title(title)
 
-    plt.show()
+
+    plt.show(block=True)
 
 
 def barchart_dual_y_shared_x(x, x_label, y1, y1_label, y2, y2_label, title):
@@ -240,3 +257,62 @@ def barchart_dual_y_shared_x(x, x_label, y1, y1_label, y2, y2_label, title):
     # f.subplots_adjust(hspace=0.3)
 
     plt.show()
+
+def plot_two_sided_x_y_lines(main_title, x_axis_tile, y_axis_title_left, y_axis_title_right,
+                             subplotables, output_file_name):
+    cmap = get_cmap(len(subplotables) + 1)
+
+    for i, plotable in enumerate(subplotables):
+        color = cmap(i)
+        if constants.DEBUG_VERBOSE:
+            print " color {} = {}".format(i, color)
+
+        ax = plt.gca()  # grab the current axis
+        ar = numpy.arange(6)
+        print "ar", ar
+        ax.set_xticks(ar)
+
+        print plotable.x_values
+        print plotable.y_values
+        # exit(0)
+        ax.set_xticklabels(['a', '4', '8', '16', '32'])
+
+        xticks = ax.xaxis.get_major_ticks()
+        print xticks[0].label1
+
+
+        plt.plot(plotable.x_values, plotable.y_values, color=color, label=plotable.label, marker='o')
+
+
+        # the dots
+        # plt.plot(plotable.x_values, plotable.y_values, )
+
+    plt.title(main_title)
+    plt.xlabel(x_axis_tile)
+    plt.ylabel("{} {}".format(y_axis_title_left, y_axis_title_right))
+
+    # plt.axis([1, 4, 0, 1])
+    plt.legend(loc='best')
+
+    plt.grid(True)
+
+    # BUG:
+    # When I show(block=False) or don't show() at all, the plt object somehow does not die and what happens is
+    # the past plots are not discarded when drawing new plots.
+    # When I show(block=True), the image does not get saved!
+
+    # BUG FIX 1:
+    # First save, then show(block = True)
+
+    # BUG FIX 2:
+    # Even better: after show(block=false)  call plt.gcf().clear(). Also might call plt.clf() plt.cla() plt.close().
+
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    plt.savefig('./output/{}_{}_{}.png'.format(output_file_name, main_title, st))
+
+    plt.show(block=True)
+    # plt.show(block=True)
+    # plt.gcf().clear()
+
+

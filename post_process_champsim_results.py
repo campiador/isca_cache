@@ -5,7 +5,7 @@
 #
 # This program reads ChampSim output files and plots them (llc_mpki and ipc)
 
-from graphics.plot import barchart_dual_y_shared_x, plot_x_y_line
+from graphics.plot import barchart_dual_y_shared_x, plot_x_y_line, plot_two_sided_x_y_lines
 from graphics.subplotable import SubPlotable
 from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
@@ -77,8 +77,8 @@ def extract_core_number_and_hitrates(ccc_line):
 def parse_and_plot(argv):
     log_time("starting")
 
-    ipcs = []
-    mpkis = []
+    mean_ipcs = []
+    mean_mpkis = []
     x_axis_names = []
 
     traces_dir_files = parse_args_return_dirfile_tuples(argv)
@@ -128,28 +128,34 @@ def parse_and_plot(argv):
         x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase,
                                                   [b[0:4] for b in champ_sim_result.benchmarks]) # first four chars of b
 
-        ipcs.append(mean_ipc)
-        mpkis.append(mean_mpki)
+        mean_ipcs.append(mean_ipc)
+        mean_mpkis.append(mean_mpki)
         x_axis_names.append(x_axis_name)
 
-        # CCC plots for a benchmark
-        for i, core in enumerate(champ_sim_result.core_results):
-            print "core hitrates:", core.core_capacity_hitrates
-            ccc_subplotable = SubPlotable("Core {}".format(i), [1, 2, 4, 8, 16], core.core_capacity_hitrates,
-                                          [0 for _ in core.core_capacity_hitrates])
-            ccc_subplotables.append(ccc_subplotable)
+        # # CCC plots for a benchmark
+        # for i, core in enumerate(champ_sim_result.core_results):
+        #     print "core hitrates:", core.core_capacity_hitrates
+        #     ccc_subplotable = SubPlotable("Core {}".format(i), [1, 2, 4, 8, 16], core.core_capacity_hitrates,
+        #                                   [0 for _ in core.core_capacity_hitrates])
+        #     ccc_subplotables.append(ccc_subplotable)
+        # # plot_x_y_line("Cache Capacity Curve for benchmark {}".format(champ_sim_result.benchmarks),
+        # #               "Ways", "CCC hit-rate", ccc_subplotables, "ccc")
 
-        plot_x_y_line("Cache Capacity Curve for benchmark {}".format(champ_sim_result.benchmarks),
-                      "#cores", "CCC hit-rate", ccc_subplotables, "ccc")
-
-    print "ipc:", ipcs
-    print "mpki:", mpkis
+    print "mean ipcs:", mean_ipcs
+    print "mean mpkis:", mean_mpkis
     print "x_axis_name:", x_axis_names
     print "\n"
 
+    x_values = [4, 8, 16, 32]
+
+
+    ipcs_subplotable = SubPlotable("IPC", x_values, mean_ipcs, [0 for _ in mean_ipcs])
+    mpkis_subplotable = SubPlotable("MPKI", x_values, mean_mpkis, [0 for _ in mean_mpkis])
+
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
-    # barchart_dual_y_shared_x(x_axis_names, "CloudSuite", mpkis, "MPKI", ipcs, "IPC", "Performance")
+    plot_two_sided_x_y_lines("CloudSuite Curves", x_axis_names, "IPC", "IPC", [ipcs_subplotable, mpkis_subplotable],
+                             "Performance")
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)

@@ -1,3 +1,30 @@
 input/results_4core_cassandra/phase0-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_cassandra/phase1-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_classification/phase0-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_classification/phase1-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_cloud9/phase0-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_cloud9/phase1-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_nutch/phase0-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_nutch/phase1-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_streaming/phase0-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_4core_streaming/phase1-core4-bimodal-no-no-plru-4core-cloudsuite-plru.txt input/results_8core_cassandra/phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_classification/phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_cloud9/phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_nutch/phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_streaming/phase01-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_classification_cassandra/phase0-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_classification_cassandra/phase1-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_streaming_cloud9/phase0-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt input/results_8core_streaming_cloud9/phase1-core8-bimodal-no-no-plru-8core-cloudsuite-plru.txt
 
 input/results_4core_cassandra/phase0-core4-bimodal-no-no-CSSnoPartition-4core-cloudsuite-CSnoPartition.txt input/results_4core_classification/phase0-core4-bimodal-no-no-CSSnoPartition-4core-cloudsuite-CSSnoPartition.txt input/results_4core_cloud9/phase0-core4-bimodal-no-no-CSSnoPartition-4core-cloudsuite-CSSnoPartition.txt input/results_4core_nutch/phase0-core4-bimodal-no-no-CSSnoPartition-4core-cloudsuite-CSSnoPartition.txt input/results_4core_streaming/phase0-core4-bimodal-no-no-CSSnoPartition-4core-cloudsuite-CSSnoPartition.txt
+
+# Cache Sweep
+
+input/results_4core_cassandra/phase0-core4-bimodal-no-no-plru-4core-1mb_corellc-cloudsuite-plru.txt
+input/results_4core_cassandra/phase0-core4-bimodal-no-no-plru-4core-2mb_corellc-cloudsuite-plru.txt
+input/results_4core_cassandra/phase0-core4-bimodal-no-no-plru-4core-4mb_corellc-cloudsuite-plru.txt
+input/results_4core_cassandra/phase0-core4-bimodal-no-no-plru-4core-8mb_corellc-cloudsuite-plru.txt
+
+input/results_4core_classification/phase0-core4-bimodal-no-no-plru-4core-1mb_corellc-cloudsuite-plru.txt
+input/results_4core_classification/phase0-core4-bimodal-no-no-plru-4core-2mb_corellc-cloudsuite-plru.txt
+input/results_4core_classification/phase0-core4-bimodal-no-no-plru-4core-4mb_corellc-cloudsuite-plru.txt
+input/results_4core_classification/phase0-core4-bimodal-no-no-plru-4core-8mb_corellc-cloudsuite-plru.txt
+
+input/results_4core_cloud9/phase0-core4-bimodal-no-no-plru-4core-1mb_corellc-cloudsuite-plru.txt
+input/results_4core_cloud9/phase0-core4-bimodal-no-no-plru-4core-2mb_corellc-cloudsuite-plru.txt
+input/results_4core_cloud9/phase0-core4-bimodal-no-no-plru-4core-4mb_corellc-cloudsuite-plru.txt
+input/results_4core_cloud9/phase0-core4-bimodal-no-no-plru-4core-8mb_corellc-cloudsuite-plru.txt
+
+input/results_4core_nutch/phase0-core4-bimodal-no-no-plru-4core-1mb_corellc-cloudsuite-plru.txt
+input/results_4core_nutch/phase0-core4-bimodal-no-no-plru-4core-2mb_corellc-cloudsuite-plru.txt
+input/results_4core_nutch/phase0-core4-bimodal-no-no-plru-4core-4mb_corellc-cloudsuite-plru.txt
+input/results_4core_nutch/phase0-core4-bimodal-no-no-plru-4core-8mb_corellc-cloudsuite-plru.txt
+
+input/results_4core_streaming/phase0-core4-bimodal-no-no-plru-4core-1mb_corellc-cloudsuite-plru.txt
+input/results_4core_streaming/phase0-core4-bimodal-no-no-plru-4core-2mb_corellc-cloudsuite-plru.txt
+input/results_4core_streaming/phase0-core4-bimodal-no-no-plru-4core-4mb_corellc-cloudsuite-plru.txt
+input/results_4core_streaming/phase0-core4-bimodal-no-no-plru-4core-8mb_corellc-cloudsuite-plru.txt
