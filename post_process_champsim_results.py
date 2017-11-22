@@ -181,7 +181,7 @@ def parse_and_plot(argv):
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
     plot_two_sided_x_y_lines_withsubplots("cassandra",
-                                          "LLC Size (MB)", "IPC", "MPKI",[mean_ipcs_subplotable,
+                                          "LLC per core(MB)", "IPC", "MPKI",[mean_ipcs_subplotable,
                                                                           mean_mpkis_subplotable], "llc_size_sweep")
 
 
@@ -194,9 +194,8 @@ def parse_and_plot(argv):
         subplotable_core_i_ipcs = SubPlotable("IPC", ['no x values needed'], core_i_ipcs, ['no error needed'])
         subplotable_core_i_mpkis = SubPlotable("MPKI", ['no x values needed'], core_i_mpkis, ['no error needed'])
 
-
         plot_two_sided_x_y_lines_withsubplots("cassandra core{}".format(i),
-                                              "LLC Size (MB)", "IPC", "MPKI",
+                                              "LLC per core (MB)", "IPC", "MPKI",
                                               [subplotable_core_i_ipcs, subplotable_core_i_mpkis], "llc_size_sweep")
 
 

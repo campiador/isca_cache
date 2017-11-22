@@ -276,17 +276,22 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
     print "xvalues:", plotable1.x_values
     print "y values:", plotable1.y_values
     # exit(0)
-    ax1.set_xticklabels(['a','4', '8', '16', '32'])
+    xtick_values = [1, 2, 3, 4]
+    xtick_labels = ["1", "2", "4", "8"]
+    plt.xticks(xtick_values, xtick_labels)
+    # fig.xticklabels= xtick_labels
 
     xticks = ax1.xaxis.get_major_ticks()
     # print xticks[0].label1
 
     ax1.set_ylabel(y_axis_title_left)
     ax1.set_label(y_axis_title_left)
+
+
     ax1.set_ylim(ymin=0, ymax=1)
 
     ax1.plot([1, 2, 3, 4], plotable1.y_values, '-', label=plotable1.label)
-    ax1.tick_params('y', colors=color1)
+    # ax1.tick_params('y', colors=color1)
 
     plotable2 = mean_subplotables[1]
 
@@ -296,8 +301,8 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
 
     ax2.set_ylabel(y_axis_title_right)
     ax2.set_label(y_axis_title_right)
-    ax2.set_ylim(ymin=0, ymax=10)
-    ax2.tick_params('y', colors=color2)
+    # ax2.set_ylim(ymin=2, ymax=10)
+    # ax2.tick_params('y', colors=color2)
     ax2.plot([1, 2, 3, 4], plotable2.y_values, '--', label=plotable2.label)
 
     # print plotable1.label
@@ -310,8 +315,8 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
     # plt.axis([1, 4, 0, 1])
     ax1.legend(loc='upper left')
     ax2.legend(loc='upper right')
-
-    plt.grid(True)
+    # ax.grid(False)
+    plt.grid(False)
 
     # BUG:
     # When I show(block=False) or don't show() at all, the plt object somehow does not die and what happens is
@@ -327,16 +332,16 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-    fig.set_size_inches(3, 5, forward=True)
+    fig.set_size_inches(3, 4, forward=True)
     fig.tight_layout()
 
     plt.savefig('./output/{}_{}_{}.png'.format(output_file_name, main_title, st))
     # fig.tight_layout()
 
 
-    plt.show(block=True)
+    plt.show(block=False)
     # plt.show(block=True)
-    exit(0)
+    # exit(0)
 
     plt.gcf().clear()
 
