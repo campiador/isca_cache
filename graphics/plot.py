@@ -258,41 +258,56 @@ def barchart_dual_y_shared_x(x, x_label, y1, y1_label, y2, y2_label, title):
 
     plt.show()
 
-def plot_two_sided_x_y_lines(main_title, x_axis_tile, y_axis_title_left, y_axis_title_right,
-                             subplotables, output_file_name):
-    cmap = get_cmap(len(subplotables) + 1)
+def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_left, y_axis_title_right,
+                                          mean_subplotables, output_file_name):
+    cmap = get_cmap(len(mean_subplotables) + 1)
 
-    for i, plotable in enumerate(subplotables):
-        color = cmap(i)
-        if constants.DEBUG_VERBOSE:
-            print " color {} = {}".format(i, color)
+    color1 = cmap(0)
+    if constants.DEBUG_VERBOSE:
+        print " color {} = {}".format(1, color1)
 
-        ax = plt.gca()  # grab the current axis
-        ar = numpy.arange(6)
-        print "ar", ar
-        ax.set_xticks(ar)
+    plotable1 = mean_subplotables[0]
 
-        print plotable.x_values
-        print plotable.y_values
-        # exit(0)
-        ax.set_xticklabels(['a', '4', '8', '16', '32'])
+    fig, ax1 = plt.subplots()  # grab the current axis
+    ar = numpy.arange(6)
+    print "ar:", ar
+    ax1.set_xticks(ar)
 
-        xticks = ax.xaxis.get_major_ticks()
-        print xticks[0].label1
+    print "xvalues:", plotable1.x_values
+    print "y values:", plotable1.y_values
+    # exit(0)
+    ax1.set_xticklabels(['a', '4', '8', '16', '32'])
 
+    xticks = ax1.xaxis.get_major_ticks()
+    # print xticks[0].label1
 
-        plt.plot(plotable.x_values, plotable.y_values, color=color, label=plotable.label, marker='o')
+    ax1.set_ylabel(y_axis_title_left)
+    ax1.set_ylim(ymin=0, ymax=1)
+    ax1.plot([1, 2, 3, 4], plotable1.y_values, color=color1, label=plotable1.label, marker='o')
+    ax1.tick_params('y', colors=color1)
+
+    plotable2 = mean_subplotables[1]
+
+    ax2= ax1.twinx()
+    color2 = cmap(1)
+
+    ax2.set_ylabel(y_axis_title_right)
+    ax2.set_ylim(ymin=0, ymax=10)
+    ax2.tick_params('y', colors=color2)
+    ax2.plot([1, 2, 3, 4], plotable2.y_values, color=color2, label=plotable2.label, marker='o')
 
 
         # the dots
         # plt.plot(plotable.x_values, plotable.y_values, )
 
-    plt.title(main_title)
-    plt.xlabel(x_axis_tile)
-    plt.ylabel("{} {}".format(y_axis_title_left, y_axis_title_right))
+
+
+    plt.title("Performance for cassandra")
+    print "xaxtitle:", x_axis_tile
+    ax1.set_xlabel(x_axis_tile)
 
     # plt.axis([1, 4, 0, 1])
-    plt.legend(loc='best')
+    # plt.legend(loc='best')
 
     plt.grid(True)
 
@@ -310,9 +325,10 @@ def plot_two_sided_x_y_lines(main_title, x_axis_tile, y_axis_title_left, y_axis_
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     plt.savefig('./output/{}_{}_{}.png'.format(output_file_name, main_title, st))
+    # fig.tight_layout()
 
     plt.show(block=True)
     # plt.show(block=True)
-    # plt.gcf().clear()
+    plt.gcf().clear()
 
 

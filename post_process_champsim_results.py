@@ -5,7 +5,7 @@
 #
 # This program reads ChampSim output files and plots them (llc_mpki and ipc)
 
-from graphics.plot import barchart_dual_y_shared_x, plot_x_y_line, plot_two_sided_x_y_lines
+from graphics.plot import barchart_dual_y_shared_x, plot_x_y_line, plot_two_sided_x_y_lines_withsubplots
 from graphics.subplotable import SubPlotable
 from model.champ_sim_result import ChampSimResult
 from model.core_perf import LLC_TOTAL_LINE_POSITION_RELATIVE_TO_CORE, extract_ipc_and_instruction_count, \
@@ -83,9 +83,11 @@ def parse_and_plot(argv):
 
     traces_dir_files = parse_args_return_dirfile_tuples(argv)
 
+    champsim_results = []
 
     for trace_dir, trace_file in traces_dir_files:
         ccc_subplotables = []
+
 
         phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive = \
             extract_trace_info_from_file_name(trace_dir, trace_file)
@@ -94,7 +96,7 @@ def parse_and_plot(argv):
         print phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive
 
         # the result object
-        champ_sim_result = ChampSimResult(phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive)
+        champsim_result = ChampSimResult(phase, core, benchmark_names, l1pref, l2pref, policy, is_inclusive)
 
         #Step through file lines
         file_lines = open("./input/{0}/{1}".format(trace_dir, trace_file), 'r').readlines()
@@ -115,22 +117,44 @@ def parse_and_plot(argv):
                 n_llc_misses = extract_llc_misses(llc_line)
 
                 core = CorePerf(ipc, n_llc_misses, n_instructions)
-                champ_sim_result.add_core_result(core)
+                champsim_result.add_core_result(core)
+
             if "CACHE CAPACIITY CURVE (Hit Rate)" in line:  
                 #  e.g. line  = CORE 0 CACHE CAPACIITY CURVE (Hit Rate):0.272091:0.466812:0.631125:0.675701:0.740989:0:
                 ccc_line = line
                 core_number, core_hitrates = extract_core_number_and_hitrates(ccc_line)
-                champ_sim_result.set_core_hitrates(core_number, core_hitrates)
+                champsim_result.set_core_hitrates(core_number, core_hitrates)
 
         # harmonic mean over number of cores
-        mean_ipc = champ_sim_result.calculate_harmonic_mean_ipc()
-        mean_mpki = champ_sim_result.calculate_harmonic_mean_mpki()
-        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champ_sim_result.n_cores, champ_sim_result.phase,
-                                                  [b[0:4] for b in champ_sim_result.benchmarks]) # first four chars of b
+        mean_ipc = champsim_result.calculate_harmonic_mean_ipc()
+        mean_mpki = champsim_result.calculate_harmonic_mean_mpki()
+        x_axis_name = "#c:{}, ph:{}\nb:{}".format(champsim_result.n_cores, champsim_result.phase,
+                                                  [b[0:4] for b in champsim_result.benchmarks]) # first four chars of b
 
         mean_ipcs.append(mean_ipc)
         mean_mpkis.append(mean_mpki)
         x_axis_names.append(x_axis_name)
+
+        champsim_results.append(champsim_result)
+
+
+    # = [[benchmark0_core0, behcnmark0_core1, ... ], ... []]
+    all_benchmarks_cores_ipcs =  []
+    all_benchmarks_cores_mpkis =  []
+
+    for champsim_result in champsim_results:  # each champsim_result represents one benchmark
+        one_benchmark_cores_ipcs = []
+        one_benchmark_cores_mpkis = []
+        for core_result in champsim_result.core_results:
+            one_benchmark_cores_ipcs.append(core_result.ipc)
+            one_benchmark_cores_mpkis.append(core_result.llc_mpki)
+        all_benchmarks_cores_ipcs.append(one_benchmark_cores_ipcs)
+        all_benchmarks_cores_mpkis.append(one_benchmark_cores_mpkis)
+
+    print "all benchmark ipcs:", all_benchmarks_cores_ipcs
+    print "all benchmarks mpkis", all_benchmarks_cores_mpkis
+
+
 
         # # CCC plots for a benchmark
         # for i, core in enumerate(champ_sim_result.core_results):
@@ -149,13 +173,15 @@ def parse_and_plot(argv):
     x_values = [4, 8, 16, 32]
 
 
-    ipcs_subplotable = SubPlotable("IPC", x_values, mean_ipcs, [0 for _ in mean_ipcs])
-    mpkis_subplotable = SubPlotable("MPKI", x_values, mean_mpkis, [0 for _ in mean_mpkis])
+    mean_ipcs_subplotable = SubPlotable("IPC", x_values, mean_ipcs, [0 for _ in mean_ipcs])
+    mean_mpkis_subplotable = SubPlotable("MPKI", x_values, mean_mpkis, [0 for _ in mean_mpkis])
+
+
 
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
-    plot_two_sided_x_y_lines("CloudSuite Curves", x_axis_names, "IPC", "IPC", [ipcs_subplotable, mpkis_subplotable],
-                             "Performance")
+    plot_two_sided_x_y_lines_withsubplots("CloudSuite Curves", "LLC Size (MB)", "IPC", "MPKI",
+                                          [mean_ipcs_subplotable, mean_mpkis_subplotable], "llc_size_sweep")
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)
