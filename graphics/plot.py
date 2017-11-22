@@ -269,21 +269,23 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
     plotable1 = mean_subplotables[0]
 
     fig, ax1 = plt.subplots()  # grab the current axis
-    ar = numpy.arange(6)
-    print "ar:", ar
-    ax1.set_xticks(ar)
+    # ar = numpy.arange(5)
+    # print "ar:", ar
+    # ax1.set_xticks(ar)
 
     print "xvalues:", plotable1.x_values
     print "y values:", plotable1.y_values
     # exit(0)
-    ax1.set_xticklabels(['a', '4', '8', '16', '32'])
+    ax1.set_xticklabels(['a','4', '8', '16', '32'])
 
     xticks = ax1.xaxis.get_major_ticks()
     # print xticks[0].label1
 
     ax1.set_ylabel(y_axis_title_left)
+    ax1.set_label(y_axis_title_left)
     ax1.set_ylim(ymin=0, ymax=1)
-    ax1.plot([1, 2, 3, 4], plotable1.y_values, color=color1, label=plotable1.label, marker='o')
+
+    ax1.plot([1, 2, 3, 4], plotable1.y_values, '-', label=plotable1.label)
     ax1.tick_params('y', colors=color1)
 
     plotable2 = mean_subplotables[1]
@@ -291,23 +293,23 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
     ax2= ax1.twinx()
     color2 = cmap(1)
 
+
     ax2.set_ylabel(y_axis_title_right)
+    ax2.set_label(y_axis_title_right)
     ax2.set_ylim(ymin=0, ymax=10)
     ax2.tick_params('y', colors=color2)
-    ax2.plot([1, 2, 3, 4], plotable2.y_values, color=color2, label=plotable2.label, marker='o')
+    ax2.plot([1, 2, 3, 4], plotable2.y_values, '--', label=plotable2.label)
 
-
-        # the dots
-        # plt.plot(plotable.x_values, plotable.y_values, )
-
-
-
-    plt.title("Performance for cassandra")
+    # print plotable1.label
+    # print plotable2.label
+    #
+    plt.title(main_title)
     print "xaxtitle:", x_axis_tile
     ax1.set_xlabel(x_axis_tile)
 
     # plt.axis([1, 4, 0, 1])
-    # plt.legend(loc='best')
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
 
     plt.grid(True)
 
@@ -324,11 +326,18 @@ def plot_two_sided_x_y_lines_withsubplots(main_title, x_axis_tile, y_axis_title_
 
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+    fig.set_size_inches(3, 5, forward=True)
+    fig.tight_layout()
+
     plt.savefig('./output/{}_{}_{}.png'.format(output_file_name, main_title, st))
     # fig.tight_layout()
 
+
     plt.show(block=True)
     # plt.show(block=True)
+    exit(0)
+
     plt.gcf().clear()
 
 

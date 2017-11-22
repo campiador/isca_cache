@@ -138,21 +138,21 @@ def parse_and_plot(argv):
         champsim_results.append(champsim_result)
 
 
-    # = [[benchmark0_core0, behcnmark0_core1, ... ], ... []]
-    all_benchmarks_cores_ipcs =  []
-    all_benchmarks_cores_mpkis =  []
+    # = [[cachesiez0_core0, behcnmark0_core1, ... ], ... []]
+    all_cachesize_cores_ipcs =  []
+    all_cachesize_cores_mpkis =  []
 
     for champsim_result in champsim_results:  # each champsim_result represents one benchmark
-        one_benchmark_cores_ipcs = []
-        one_benchmark_cores_mpkis = []
+        one_cache_size_cores_ipcs = []
+        one_cachesize_cores_mpkis = []
         for core_result in champsim_result.core_results:
-            one_benchmark_cores_ipcs.append(core_result.ipc)
-            one_benchmark_cores_mpkis.append(core_result.llc_mpki)
-        all_benchmarks_cores_ipcs.append(one_benchmark_cores_ipcs)
-        all_benchmarks_cores_mpkis.append(one_benchmark_cores_mpkis)
+            one_cache_size_cores_ipcs.append(core_result.ipc)
+            one_cachesize_cores_mpkis.append(core_result.llc_mpki)
+        all_cachesize_cores_ipcs.append(one_cache_size_cores_ipcs)
+        all_cachesize_cores_mpkis.append(one_cachesize_cores_mpkis)
 
-    print "all benchmark ipcs:", all_benchmarks_cores_ipcs
-    print "all benchmarks mpkis", all_benchmarks_cores_mpkis
+    print "all cachesize ipcs:", all_cachesize_cores_ipcs
+    print "all cachesize mpkis", all_cachesize_cores_mpkis
 
 
 
@@ -180,8 +180,25 @@ def parse_and_plot(argv):
 
     # barchart(x_axis_names, ipcs, "IPC", "")
     # barchart(x_axis_names, mpkis, "MPKI", "")
-    plot_two_sided_x_y_lines_withsubplots("CloudSuite Curves", "LLC Size (MB)", "IPC", "MPKI",
-                                          [mean_ipcs_subplotable, mean_mpkis_subplotable], "llc_size_sweep")
+    plot_two_sided_x_y_lines_withsubplots("cassandra",
+                                          "LLC Size (MB)", "IPC", "MPKI",[mean_ipcs_subplotable,
+                                                                          mean_mpkis_subplotable], "llc_size_sweep")
+
+
+
+    for i in range(0, 4): # core number
+
+        core_i_ipcs = [one_ipc_cachesize[i] for one_ipc_cachesize in all_cachesize_cores_ipcs]
+        core_i_mpkis = [one_mpki_cachesize[i] for one_mpki_cachesize in all_cachesize_cores_mpkis]
+
+        subplotable_core_i_ipcs = SubPlotable("IPC", ['no x values needed'], core_i_ipcs, ['no error needed'])
+        subplotable_core_i_mpkis = SubPlotable("MPKI", ['no x values needed'], core_i_mpkis, ['no error needed'])
+
+
+        plot_two_sided_x_y_lines_withsubplots("cassandra core{}".format(i),
+                                              "LLC Size (MB)", "IPC", "MPKI",
+                                              [subplotable_core_i_ipcs, subplotable_core_i_mpkis], "llc_size_sweep")
+
 
 if __name__ == "__main__":
     parse_and_plot(sys.argv)
